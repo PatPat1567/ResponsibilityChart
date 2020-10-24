@@ -1,3 +1,5 @@
+using System;
+
 namespace ResponsibilityChart.Api.Models
 {
   public class Responsibility
