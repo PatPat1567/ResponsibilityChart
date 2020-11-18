@@ -4,4 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="5.1.0" />
+    <PackageReference Include="BlazorTable" Version="1.13.1" />
+  </ItemGroup>
+
 </Project>
