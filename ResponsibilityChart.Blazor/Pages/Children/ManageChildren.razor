@@ -7,15 +7,32 @@
 <Table TableItem="Child" Items="data" PageSize="10" >
   <Column TableItem="Child" Title="Actions" Field="@(x => x.Id)" Sortable="false" Filterable="false" >
     <Template Context="ChildContext">
-      <button @onclick="@(() => EditChild(ChildContext.Id))">
+      <button @onclick="@(() => EditChild(ChildContext))">
         <span class="oi oi-pencil" aria-hidden="true"></span>
       </button>
-      <button @onclick="@(() => DeleteChild(ChildContext.Id))">
+      <button @onclick="@(() => DeleteChild(ChildContext))">
         <span class="oi oi-trash" aria-hidden="true"></span>
       </button>
     </Template>
   </Column>
   <Column TableItem="Child" Title="Id" Field="@(x => x.Id)" Sortable="true" Filterable="false" />
+  <Column TableItem="Child" Title="Name" Field="@(x => x.Name)" Sortable="true" Filterable="false" />
+  <Column TableItem="Child" Title="Date Of Birth" Field="@(x => x.DateOfBirth)" Sortable="true" Filterable="false" >
+    <Template>
+      @if (context.DateOfBirth.HasValue)
+      {
+        @context.DateOfBirth.Value.ToShortDateString();
+      }
+    </Template>
+  </Column>
+  <Column TableItem="Child" Title="Gender" Field="@(x => x.Gender)" Sortable="true" Filterable="false" >
+    <Template>
+      @if(context.Gender.HasValue)
+      {
+        @(Regex.Replace(context.Gender.Value.ToString(), "([a-z])([A-Z])", "$1 $2"));
+      }
+    </Template>
+  </Column>
   <Pager ShowPageNumber="true" ShowTotalCount="true" ShowPageSizes="true" />
 </Table>
 
@@ -29,25 +46,31 @@
   protected override Task OnInitializedAsync()
   {
     data = new List<Child>() {
-      new Child() {Id=1}
-      };
-      return base.OnInitializedAsync();
+      new Child() 
+      { 
+        Id = Guid.NewGuid() ,
+        Name = "Example Child",
+        DateOfBirth = new DateTime(),
+        Gender = Gender.NonBinary
+      }
+    };
+    return base.OnInitializedAsync();
   }
 
   private void CreateChild()
   {
     var AddChildModal = Modal.Show(typeof(AddEditChild), "Add Child");
   }
-  private void EditChild(int id)
+  private void EditChild(Child child)
   {
     var parameters = new ModalParameters();
-    parameters.Add("Child", id);
+    parameters.Add("Child", child);
     var EditChildModal = Modal.Show(typeof(AddEditChild), "Edit Child", parameters);
   }
-  private void DeleteChild(int id)
+  private void DeleteChild(Child child)
   {
     var parameters = new ModalParameters();
-    parameters.Add("Child", id);
+    parameters.Add("Child", child);
     var DeleteChildModal = Modal.Show(typeof(DeleteChild), "Remove Child", parameters);
   }
 }

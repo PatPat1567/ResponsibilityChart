@@ -1,7 +1,26 @@
 
-<h1>Remove Child</h1>
+<EditForm Model="@Child" OnSubmit="RemoveChild">
+
+  <p>
+    Are you sure you want to remove @(Child.Name)?
+  </p>
+
+  <button type="button" @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+  <button type="submit" class="btn btn-primary">Confirm</button>
+
+</EditForm>
 
 @code {
+  [CascadingParameter]
+  BlazoredModalInstance BlazoredModal { get; set; }
+
   [Parameter]
-  public int Child { get; set; }
+  public Child Child { get; set; }
+  
+  private void RemoveChild()
+  {
+    // Save changes
+    Console.WriteLine("Child was removed");
+    BlazoredModal.Close(ModalResult.Ok($"Child was removed successfully."));
+  }
 }

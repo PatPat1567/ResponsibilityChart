@@ -1,7 +1,58 @@
+<EditForm Model="@Child" OnValidSubmit="SubmitChanges">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
 
-<h1>Add Edit Child</h1>
+  <div>
+    <label for="child-name">
+      Child's Name:
+      <InputText id="child-name" DisplayName="Child's Name" @bind-Value="Child.Name" />
+    </label>
+  </div>
+  <div>
+    <label for="child-dob">
+      Child's Date of Birth:
+      <InputDate id="child-dob" DisplayName="Child's Date of Birth" @bind-Value="Child.DateOfBirth" />
+    </label>
+  </div>
+  <div>
+    <label for="child-gender">
+      Child's Gender:
+      <InputSelect id="child-gender" DisplayName="Child's Gender" @bind-Value="Child.Gender" >
+        <option value="">Select gender</option>
+        @foreach(var gender in Enum.GetNames(typeof(Gender)))
+        {
+          <option value="@gender">@(Regex.Replace(gender, "([a-z])([A-Z])", "$1 $2"))</option> 
+        }
+      </InputSelect>
+    </label>
+  </div>
+
+  <button type="button" @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
+
+</EditForm>
 
 @code {
+  
+  [CascadingParameter]
+  BlazoredModalInstance BlazoredModal { get; set; }
+
   [Parameter]
-  public int Child { get; set; }
+  public Child Child { get; set; }
+
+  protected override Task OnInitializedAsync()
+  {
+    if (Child is null)
+    {
+      Child = new Child();
+    }
+    return base.OnInitializedAsync();
+  }
+
+  private void SubmitChanges()
+  {
+    // Save changes
+    Console.WriteLine("Child was submitted");
+    BlazoredModal.Close(ModalResult.Ok($"Child was submitted successfully."));
+  }
 }
