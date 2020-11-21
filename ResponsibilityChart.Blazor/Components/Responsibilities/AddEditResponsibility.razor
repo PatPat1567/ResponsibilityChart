@@ -1,7 +1,82 @@
+<EditForm Model="@Responsibility" OnValidSubmit="SubmitChanges">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
 
-<h1>Add Edit Responsibility</h1>
+  <div>
+    <label for="responsibility-title">
+      Responsibility Title:
+      <InputText id="responsibility-title" DisplayName="Responsibility Title" @bind-Value="Responsibility.Name" />
+    </label>
+  </div>
+  @* ToDo: Add logic to select a default image to go with the responsibility*@
+  <div>
+    <label for="recommended-age-groups">
+      Recommended Age Groups:
+    </label>
+    <div>
+      @foreach (var ageGroup in Enum.GetNames(typeof(AgeGroup)))
+      {
+        <div>
+          <label for="@($"age-group-{ageGroup}")" >
+            <input type="checkbox" id="@($"age-group-{ageGroup}")" DisplayName="@(Regex.Replace(ageGroup, "([a-z])([A-Z])", "$1 $2"))" checked="@(IsAgeGroupChecked(ageGroup) ? "checked": null)" @onchange="@((e) => CheckboxChanged(e, ageGroup))" />
+            @(Regex.Replace(ageGroup, "([a-z])([A-Z])", "$1 $2"))
+          </label>
+        </div>
+      }
+    </div>
+  </div>
+
+  <button type="button" @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
+
+</EditForm>
 
 @code {
+  
+  [CascadingParameter]
+  BlazoredModalInstance BlazoredModal { get; set; }
+
   [Parameter]
-  public int Responsibility { get; set; }
+  public Responsibility Responsibility { get; set; }
+
+  protected override Task OnInitializedAsync()
+  {
+    if (Responsibility is null)
+    {
+      Responsibility = new Responsibility()
+      {
+        RecommendedAgeGroups = new List<AgeGroup>()
+      };
+    }
+    return base.OnInitializedAsync();
+  }
+
+  private bool IsAgeGroupChecked(string group)
+  {
+    AgeGroup ageGroup = (AgeGroup)Enum.Parse(typeof(AgeGroup), group);
+    return Responsibility.RecommendedAgeGroups.Contains(ageGroup);
+  }
+
+  private void CheckboxChanged(ChangeEventArgs e, string group)
+  {
+    AgeGroup ageGroup = (AgeGroup)Enum.Parse(typeof(AgeGroup), group);
+    if ((bool)e.Value)
+    {
+      if (!Responsibility.RecommendedAgeGroups.Contains(ageGroup))
+      {
+        Responsibility.RecommendedAgeGroups.Add(ageGroup);
+      }
+    }
+    else if (!(bool)e.Value)
+    {
+      Responsibility.RecommendedAgeGroups.Remove(ageGroup);
+    }
+  }
+
+  private void SubmitChanges()
+  {
+    // Save changes
+    Console.WriteLine("Responsibility was created");
+    BlazoredModal.Close(ModalResult.Ok($"Responsibility was created successfully."));
+  }
 }

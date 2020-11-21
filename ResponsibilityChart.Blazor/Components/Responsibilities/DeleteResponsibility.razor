@@ -1,7 +1,26 @@
 
-<h1>Delete Responsibility</h1>
+<EditForm Model="@Responsibility" OnSubmit="RemoveResponsibility">
+
+  <p>
+    Are you sure you want to remove @(Responsibility.Name)?
+  </p>
+
+  <button type="button" @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+  <button type="submit" class="btn btn-primary">Confirm</button>
+
+</EditForm>
 
 @code {
+  [CascadingParameter]
+  BlazoredModalInstance BlazoredModal { get; set; }
+
   [Parameter]
-  public int Responsibility { get; set; }
+  public Responsibility Responsibility { get; set; }
+  
+  private void RemoveResponsibility()
+  {
+    // Save changes
+    Console.WriteLine("Responsibility was removed");
+    BlazoredModal.Close(ModalResult.Ok($"Responsibility was removed successfully."));
+  }
 }
