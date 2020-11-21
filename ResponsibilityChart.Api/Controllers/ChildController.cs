@@ -24,9 +24,6 @@ namespace ResponsibilityChart.Api.Controllers
     /// <summary>
     /// Gets a list of all children.
     /// </summary>
-    // /// <remarks>
-    // /// </remarks>
-    // /// <param name="id"></param>
     /// <returns> A list of children items </returns>
     /// <response code="200">Returns the list of children</response>
     [HttpGet]
