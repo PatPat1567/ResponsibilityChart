@@ -1,0 +1,109 @@
+@page "/ResponsibilityChart"
+
+<EditForm Model="CurrentChart">
+  <div>
+    <h1>My Responsibilities for @CurrentChart.WeekStart.ToShortDateString()</h1>
+
+    <label for="selected-child">
+      Name: 
+      <select id="selected-child">
+        @foreach(var child in Children)
+        {
+          <option>@child.Name</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <div>
+    <div id="grid">
+      <div id="grid-header">
+        @foreach(var day in Enum.GetNames(typeof(DayOfWeek)))
+        {
+          <span class="responsiblity-column"></span>
+          <span class="@day">@day</span>
+        }
+      </div>
+      @foreach (var responsibility in CurrentChart.AssignedResponsibilities)
+      {
+        <div id="grid-responsibility-@(responsibility.Id)">
+          <span class="responsiblity-column">@responsibility.Name</span>
+          
+          @foreach(var day in Enum.GetNames(typeof(DayOfWeek)))
+          {
+            <span class="@day">
+              <button type="button" @onclick="((e) => CompleteResponsibilityAsync(e, responsibility, day))" >
+                <span class="oi oi-x"></span>
+              </button>
+            </span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div>
+    <label>
+      This week's goal is
+      <b>@CurrentChart.Goal</b>
+    </label>
+
+    <label>
+      This week's performance is:
+      <InputSelect @bind-Value="@CurrentChart.Performance">
+        <option value="">Please select a grade</option>
+        @foreach(var performance in Enum.GetNames(typeof(PerformanceGrade)))
+        {
+          <option value="@performance">@performance.ToString()</option>
+        }
+      </InputSelect>
+    </label>
+  </div>
+</EditForm>
+<div>  
+  <button @onclick="@(() => CreateChart())">
+    <span class="oi oi-plus" aria-hidden="true">Create New Chart</span>
+  </button>
+</div>
+
+
+@code {
+  [CascadingParameter]
+  public IModalService Modal { get; set; }
+  private Models.Chart CurrentChart { get; set; }
+  private IList<Child> Children { get; set; }
+
+  private IList<Responsibility> Responsibilities { get; set; }
+
+  protected override Task OnInitializedAsync()
+  {
+    Children = new List<Child>();
+    Children.Add(new Child(){ Name="John", DateOfBirth= new DateTime(), Gender=Gender.Male});
+    Children.Add(new Child(){ Name="James", DateOfBirth= new DateTime(), Gender=Gender.Male});
+
+    Responsibilities = new List<Responsibility>();
+    Responsibilities.Add(new Responsibility(){Id=0, Name="Clean Room", RecommendedAgeGroups = new List<AgeGroup>(){AgeGroup.ThreeToFour, AgeGroup.FiveToEight, AgeGroup.EightToTwelve, AgeGroup.ThirteenPlus}});
+    Responsibilities.Add(new Responsibility(){Id=0, Name="Take Out Trash", RecommendedAgeGroups = new List<AgeGroup>(){AgeGroup.EightToTwelve, AgeGroup.ThirteenPlus}});
+
+    CurrentChart = new Models.Chart() {
+      WeekStart = new DateTime(2012, 11, 22),
+      AssignedChild = new Child(){ Name="John", DateOfBirth= new DateTime(), Gender=Gender.Male},
+      AssignedResponsibilities = Responsibilities,
+      Goal = "70%"
+    };
+    return base.OnInitializedAsync();
+  }
+  
+  private Task CompleteResponsibilityAsync(MouseEventArgs e,Responsibility responsibility,string DayOfWeek)
+  {
+    // Create responsibilty completed object
+    // Save object to week/child
+    throw new NotImplementedException();
+  }
+
+  private void CreateChart()
+  { 
+    var AddChartModal = Modal.Show(typeof(AddEditChart), "Create Chart");
+  }
+
+}

@@ -1,0 +1,90 @@
+<EditForm Model="Chart" OnValidSubmit="SubmitChanges" >
+  <div>
+    <label for="week-start">
+      Week Start Date:
+      <InputDate id="week-start" @bind-Value="Chart.WeekStart" />
+    </label>
+    <label for="week-end">
+      Week End Date:
+      <b id="week-end">@Chart.WeekEnd.ToShortDateString()</b>
+    </label>
+  </div>
+
+  <div>
+    <label for="assigned-child">
+      Assigned Child:
+      <InputSelect id="assigned-child" @bind-Value="Chart.AssignedChild">
+        @foreach (var child in Children)
+        {
+          <option value="child">@child.Name</option>
+        }
+      </InputSelect>
+    </label>
+  </div>
+
+  <MultiSelector NoSelected="NotSelected" Selected="Selected" />
+
+  <div>
+    <label for="week-goal">
+      Weekly Goal: 
+      <InputText id="week-goal" @bind-Value="@Chart.Goal" />
+    </label>
+  </div>
+  
+  
+  <button type="button" @onclick="BlazoredModal.Cancel" class="btn btn-secondary">Cancel</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {  
+  [CascadingParameter]
+  BlazoredModalInstance BlazoredModal { get; set; }
+  [Parameter]
+  public Chart Chart { get; set; }
+
+  private IList<Child> Children { get; set; }
+  private IList<Responsibility> Responsibilities { get; set; }
+
+  private List<MultipleSelectorModel> Selected = new List<MultipleSelectorModel>();
+  private List<MultipleSelectorModel> NotSelected = new List<MultipleSelectorModel>();
+
+  protected override Task OnInitializedAsync()
+  {
+    if (Chart is null)
+    {
+      Chart = new Chart()
+      {
+        WeekStart = DateTime.Today.AddDays((int)(Enum.GetNames(typeof(DayOfWeek)).Length - DateTime.Today.DayOfWeek))
+      };
+    }
+    Children = new List<Child>() {
+      new Child() 
+      { 
+        Id = Guid.NewGuid() ,
+        Name = "Example Child",
+        DateOfBirth = new DateTime(),
+        Gender = Gender.NonBinary
+      }
+    };
+    Responsibilities = new List<Responsibility>() {
+      new Responsibility() 
+      {
+        Id=1, 
+        Name = "Clean Bedroom",
+        RecommendedAgeGroups = new List<AgeGroup> {AgeGroup.ThreeToFour, AgeGroup.FiveToEight, AgeGroup.EightToTwelve, AgeGroup.ThirteenPlus}
+      }
+    };
+    Selected = Chart.AssignedResponsibilities.Select(x => new MultipleSelectorModel(x.Id.ToString(), x.Name)).ToList();
+    NotSelected = Responsibilities.Except(Chart.AssignedResponsibilities).Select(x => new MultipleSelectorModel(x.Id.ToString(), x.Name)).ToList();
+    return base.OnInitializedAsync();
+  }
+
+  private void SubmitChanges()
+  {
+    // Create the CompletedResponsibilityObjects
+    // Save changes
+    Console.WriteLine("Chart was created");
+    BlazoredModal.Close(ModalResult.Ok($"Chart was created successfully."));
+  }
+
+}
