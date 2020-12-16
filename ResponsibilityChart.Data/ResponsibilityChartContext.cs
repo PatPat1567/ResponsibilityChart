@@ -8,7 +8,6 @@ namespace ResponsibilityChart.Data
   public class ResponsibilityChartContext : DbContext
   {
     public DbSet<Child> Children { get; set; }
-    public DbSet<ChildResponsibility> ChildResponsibilities { get; set; }
     public DbSet<Responsibility> Responsibilities { get; set; }
 
     public ResponsibilityChartContext(DbContextOptions<ResponsibilityChartContext> options) : base(options)
@@ -20,7 +19,6 @@ namespace ResponsibilityChart.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       modelBuilder.ApplyConfiguration(new ChildConfiguration());
-      modelBuilder.ApplyConfiguration(new ChildResponsibilityConfiguration());
       modelBuilder.ApplyConfiguration(new ResponsibilityConfiguration());
     }
   }
