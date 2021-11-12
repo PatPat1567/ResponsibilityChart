@@ -6,7 +6,7 @@ using ResponsibilityChart.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddScoped<IResponsibilityService, ResponsibilityService>();
+builder.Services.AddSingleton<IResponsibilityService, ResponsibilityService>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
