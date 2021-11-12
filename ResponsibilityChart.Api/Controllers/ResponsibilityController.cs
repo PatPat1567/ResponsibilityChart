@@ -23,14 +23,45 @@ namespace ResponsibilityChart.Api.Controllers
       this.service = service;
     }
 
+    /// <summary>
+    /// Returns the full list of responsibilities.
+    /// </summary>
+    /// <returns>The list of resopnsibilities available.</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     Get /api/Responsibility
+    ///
+    /// </remarks>
+    /// <response code="200">Returns all responsibilities.</response>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
     public IActionResult Get()
     {
       var responsiblities = service.Get();
       return Ok(responsiblities);
     }
 
+    /// <summary>
+    /// Returns the specific responsibility.
+    /// </summary>
+    /// <returns>The specific responsibility, if exists.</returns>
+    /// <param name="id">The id of the responsibility.</param>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     Get /api/Responsibility/1
+    ///
+    /// </remarks>
+    /// <response code="200">Returns responsibility.</response>
+    /// <response code="400">If the responsibility does not exist.</response>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
     public IActionResult Get(int id)
     {
       var responsibility = service.Get(id);
@@ -39,14 +70,61 @@ namespace ResponsibilityChart.Api.Controllers
       return Ok(responsibility);
     }
 
+    /// <summary>
+    /// Adds the specific responsibility.
+    /// </summary>
+    /// <returns>The new responsibility, if exists.</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /api/Responsibility
+    ///     {
+    ///        "name": "Responsibility Name",
+    ///        "imageLink": "",
+    ///        "recommendedAgeGroups": [
+    ///           0
+    ///        ]
+    ///     }
+    ///
+    /// </remarks>
+    /// <response code="201">Returns responsibility.</response>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
     public IActionResult Create([FromBody]Responsibility responsibility)
     {
       service.Add(responsibility);
-      return CreatedAtAction(nameof(Created), new { id = responsibility.Id}, responsibility);
+      return CreatedAtAction(nameof(Get), new { id = responsibility.Id}, responsibility);
     }
 
+    /// <summary>
+    /// Updates the specific responsibility.
+    /// </summary>
+    /// <param name="id">The id of the responsibility.</param>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     PUT /api/Responsibility/1
+    ///     {
+    ///        "id": 1,
+    ///        "name": "Responsibility Name",
+    ///        "imageLink": "",
+    ///        "recommendedAgeGroups": [
+    ///           0
+    ///        ]
+    ///     }
+    ///
+    /// </remarks>
+    /// <response code="204">Success</response>
+    /// <response code="400">If the id does not match the passed in responsibility</response>
+    /// <response code="404">If the responsibility does not exist.</response>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
     public IActionResult Update(int id, [FromBody]Responsibility responsibility)
     {
       if (id != responsibility.Id)
@@ -62,7 +140,23 @@ namespace ResponsibilityChart.Api.Controllers
 
     }
 
+    /// <summary>
+    /// Deletes the specific responsibility.
+    /// </summary>
+    /// <param name="id">The id of the responsibility.</param>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     DELETE /api/Responsibility/1
+    ///
+    /// </remarks>
+    /// <response code="204">Success</response>
+    /// <response code="404">If the responsibility does not exist.</response>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
     public IActionResult Delete(int id)
     {
       var responsibility = service.Get(id);
