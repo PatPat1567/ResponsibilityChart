@@ -1,3 +1,4 @@
+using System.Runtime.Versioning;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ResponsibilityChart.Api.Models;
+using ResponsibilityChart.Api.Interfaces;
 
 namespace ResponsibilityChart.Api.Controllers
 {
@@ -13,46 +15,63 @@ namespace ResponsibilityChart.Api.Controllers
   public class ResponsibilityController : ControllerBase
   {
     private readonly ILogger<ResponsibilityController> logger;
+    private readonly IResponsibilityService service;
 
-    public ResponsibilityController(ILogger<ResponsibilityController> logger)
+    public ResponsibilityController(ILogger<ResponsibilityController> logger, IResponsibilityService service)
     {
       this.logger = logger;
+      this.service = service;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-      //Return list of responsibilities
-      return Ok(new List<Responsibility>());
+      var responsiblities = service.Get();
+      return Ok(responsiblities);
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-      //Return single responsibility
-      return Ok(new Responsibility());
+      var responsibility = service.Get(id);
+      if (responsibility is null)
+        return BadRequest();
+      return Ok(responsibility);
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody]Responsibility responsibility)
+    public IActionResult Create([FromBody]Responsibility responsibility)
     {
-      //Add new responsibility
-      return Ok();
+      service.Add(responsibility);
+      return CreatedAtAction(nameof(Created), new { id = responsibility.Id}, responsibility);
     }
 
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody]Responsibility responsibility)
+    public IActionResult Update(int id, [FromBody]Responsibility responsibility)
     {
-      //Update a responsibility
-      return Ok();
+      if (id != responsibility.Id)
+        return BadRequest();
+      
+      var existingResponsibility = service.Get(id);
+      if (existingResponsibility is null)
+        return NotFound();
+
+      service.Update(responsibility);
+
+      return NoContent();
+
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-      //Delete a responsibility
+      var responsibility = service.Get(id);
 
-      return Ok();
+      if (responsibility is null)
+        return NotFound();
+
+      service.Delete(id);
+      return NoContent();
     }
     
   }
