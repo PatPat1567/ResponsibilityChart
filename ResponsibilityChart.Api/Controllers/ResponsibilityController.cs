@@ -74,6 +74,7 @@ namespace ResponsibilityChart.Api.Controllers
     /// Adds the specific responsibility.
     /// </summary>
     /// <returns>The new responsibility, if exists.</returns>
+    /// <param name="responsibility">The new responsibility.</param>
     /// <remarks>
     /// Sample request:
     ///
@@ -102,6 +103,7 @@ namespace ResponsibilityChart.Api.Controllers
     /// Updates the specific responsibility.
     /// </summary>
     /// <param name="id">The id of the responsibility.</param>
+    /// <param name="responsibility">The updated responsibility value.</param>
     /// <remarks>
     /// Sample request:
     ///

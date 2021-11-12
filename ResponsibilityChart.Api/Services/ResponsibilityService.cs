@@ -25,7 +25,9 @@ namespace ResponsibilityChart.Api.Services
             return Responsibilities;
         }
 
+#nullable enable
         public Responsibility? Get(int id)
+#nullable disable
         {
             return Responsibilities.FirstOrDefault(x => x.Id == id);
         }
