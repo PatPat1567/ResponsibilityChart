@@ -1,26 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
+using ResponsibilityChart.Api.Interfaces;
+using ResponsibilityChart.Api.Services;
 
-namespace ResponsibilityChart.Api
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddScoped<IResponsibilityService, ResponsibilityService>();
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen( c =>
 {
-    public class Program
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        public static void Main(string[] args)
+        Version = "v1",
+        Title = "Responsibility Chart Api",
+        Description = "A basic api to interact between responsibility chart UI and the database backend.",
+        Contact = new OpenApiContact
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            Name = "Patrick Towle",
+            Email = string.Empty,
+            Url = new Uri("https://github.com/patpat1567"),
+        },
+        // License = new OpenApiLicense
+        // {
+        //     Name = "Use under MIT"
+        // }
+    });
+    
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => 
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Responsibility Chart Api");
+        c.RoutePrefix = string.Empty;
+    });
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
