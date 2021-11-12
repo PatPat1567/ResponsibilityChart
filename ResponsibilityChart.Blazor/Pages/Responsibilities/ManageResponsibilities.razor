@@ -35,7 +35,7 @@
   [CascadingParameter]
   public IModalService Modal { get; set; }
 
-  private IEnumerable<Responsibility> data { get; set;}
+  private IList<Responsibility> data { get; set;}
 
   protected override Task OnInitializedAsync()
   {
@@ -50,20 +50,39 @@
     return base.OnInitializedAsync();
   }
 
-  private void CreateResponsibility()
+  private async Task CreateResponsibility()
   {
     var AddResponsibilityModal = Modal.Show(typeof(AddEditResponsibility), "Add Responsibility");
+    var result = await AddResponsibilityModal.Result;
+    if (result.DataType == typeof(Responsibility))
+    {
+      data.Add((Responsibility)result.Data);
+    }
   }
-  private void EditResponsibility(Responsibility responsibility)
+  private async Task EditResponsibility(Responsibility responsibility)
   {
     var parameters = new ModalParameters();
     parameters.Add("Responsibility", responsibility);
     var EditResponsibilityModal = Modal.Show(typeof(AddEditResponsibility), "Edit Responsibility", parameters);
+    var result = await EditResponsibilityModal.Result;
+    if (result.DataType == typeof(Responsibility))
+    {
+      var elementNumber = data.IndexOf(responsibility);
+      if (elementNumber != -1)
+      {
+        data[elementNumber] = (Responsibility)result.Data;
+      }
+    }
   }
-  private void DeleteResponsibility(Responsibility responsibility)
+  private async Task DeleteResponsibility(Responsibility responsibility)
   {
     var parameters = new ModalParameters();
     parameters.Add("Responsibility", responsibility);
     var DeleteResponsibilityModal = Modal.Show(typeof(DeleteResponsibility), "Delete Responsibility", parameters);
+    var result = await DeleteResponsibilityModal.Result;
+    if (!result.Cancelled)
+    {
+      data.Remove(responsibility);
+    }
   }
 }
