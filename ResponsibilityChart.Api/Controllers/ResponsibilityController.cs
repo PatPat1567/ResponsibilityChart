@@ -12,6 +12,8 @@ namespace ResponsibilityChart.Api.Controllers
 {
   [ApiController]
   [Route("api/[controller]")]
+  [Produces("application/json")]
+  [ProducesResponseType(StatusCodes.Status500InternalServerError)]
   public class ResponsibilityController : ControllerBase
   {
     private readonly ILogger<ResponsibilityController> logger;
@@ -36,8 +38,6 @@ namespace ResponsibilityChart.Api.Controllers
     /// <response code="200">Returns all responsibilities.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public IActionResult Get()
     {
       var responsiblities = service.Get();
@@ -60,8 +60,6 @@ namespace ResponsibilityChart.Api.Controllers
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public IActionResult Get(int id)
     {
       var responsibility = service.Get(id);
@@ -91,12 +89,10 @@ namespace ResponsibilityChart.Api.Controllers
     /// <response code="201">Returns responsibility.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public IActionResult Create([FromBody]Responsibility responsibility)
     {
       service.Add(responsibility);
-      return CreatedAtAction(nameof(Get), new { id = responsibility.Id}, responsibility);
+      return CreatedAtAction(nameof(Create), new { id = responsibility.Id}, responsibility);
     }
 
     /// <summary>
@@ -125,8 +121,6 @@ namespace ResponsibilityChart.Api.Controllers
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public IActionResult Update(int id, [FromBody]Responsibility responsibility)
     {
       if (id != responsibility.Id)
@@ -157,8 +151,6 @@ namespace ResponsibilityChart.Api.Controllers
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public IActionResult Delete(int id)
     {
       var responsibility = service.Get(id);
