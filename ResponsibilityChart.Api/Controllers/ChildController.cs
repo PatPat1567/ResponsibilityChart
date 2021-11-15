@@ -78,6 +78,10 @@ namespace ResponsibilityChart.Api.Controllers
     ///
     ///     POST /api/Child
     ///     {
+    ///       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///       "name": "Child Name",
+    ///       "dateOfBrith": "2021-11-15T00:00:00.000Z",
+    ///       "gender": 0
     ///     }
     ///
     /// </remarks>
@@ -100,6 +104,10 @@ namespace ResponsibilityChart.Api.Controllers
     ///
     ///     PUT /api/Child/1
     ///     {
+    ///       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///       "name": "Child Name",
+    ///       "dateOfBrith": "2021-11-15T00:00:00.000Z",
+    ///       "gender": 0
     ///     }
     ///
     /// </remarks>
