@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IResponsibilityService, ResponsibilityService>();
 builder.Services.AddSingleton<IChildService, ChildService>();
+builder.Services.AddSingleton<IChartService, ChartService>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
