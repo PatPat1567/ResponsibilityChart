@@ -88,10 +88,10 @@ namespace ResponsibilityChart.Api.Controllers
     /// <response code="201">Returns child.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public IActionResult Post([FromBody]Child child)
+    public IActionResult Create([FromBody]Child child)
     {
       service.Add(child);
-      return CreatedAtAction(nameof(Post), new { id = child.Id}, child);
+      return CreatedAtAction(nameof(Create), new { id = child.Id}, child);
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ namespace ResponsibilityChart.Api.Controllers
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Put(Guid id, [FromBody]Child child)
+    public IActionResult Update(Guid id, [FromBody]Child child)
     {
       if (id != child.Id)
         return BadRequest();
